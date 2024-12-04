@@ -1,5 +1,8 @@
 #include "binary_trees.h"
 
+bst_t *find_successor(bst_t *node);
+bst_t *replace_node(bst_t *root, bst_t *node);
+
 /**
  * find_successor - Finds the in-order successor of a node
  * @node: Node to find successor for
