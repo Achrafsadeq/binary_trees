@@ -9,9 +9,9 @@
  */
 avl_t *find_min(avl_t *node)
 {
-    while (node && node->left)
-        node = node->left;
-    return (node);
+	while (node && node->left)
+		node = node->left;
+	return (node);
 }
 
 /**
@@ -22,36 +22,36 @@ avl_t *find_min(avl_t *node)
  */
 avl_t *rebalance(avl_t *tree)
 {
-    int balance;
+	int balance;
 
-    if (!tree)
-        return (NULL);
+	if (!tree)
+		return (NULL);
 
-    balance = binary_tree_balance(tree);
+	balance = binary_tree_balance(tree);
 
-    /* Left-Left case */
-    if (balance > 1 && binary_tree_balance(tree->left) >= 0)
-        return (binary_tree_rotate_right(tree));
+	/* Left-Left case */
+	if (balance > 1 && binary_tree_balance(tree->left) >= 0)
+		return (binary_tree_rotate_right(tree));
 
-    /* Left-Right case */
-    if (balance > 1 && binary_tree_balance(tree->left) < 0)
-    {
-        tree->left = binary_tree_rotate_left(tree->left);
-        return (binary_tree_rotate_right(tree));
-    }
+	/* Left-Right case */
+	if (balance > 1 && binary_tree_balance(tree->left) < 0)
+	{
+		tree->left = binary_tree_rotate_left(tree->left);
+		return (binary_tree_rotate_right(tree));
+	}
 
-    /* Right-Right case */
-    if (balance < -1 && binary_tree_balance(tree->right) <= 0)
-        return (binary_tree_rotate_left(tree));
+	/* Right-Right case */
+	if (balance < -1 && binary_tree_balance(tree->right) <= 0)
+		return (binary_tree_rotate_left(tree));
 
-    /* Right-Left case */
-    if (balance < -1 && binary_tree_balance(tree->right) > 0)
-    {
-        tree->right = binary_tree_rotate_right(tree->right);
-        return (binary_tree_rotate_left(tree));
-    }
+	/* Right-Left case */
+	if (balance < -1 && binary_tree_balance(tree->right) > 0)
+	{
+		tree->right = binary_tree_rotate_right(tree->right);
+		return (binary_tree_rotate_left(tree));
+	}
 
-    return (tree);
+	return (tree);
 }
 
 /**
@@ -63,38 +63,38 @@ avl_t *rebalance(avl_t *tree)
  */
 avl_t *avl_remove(avl_t *root, int value)
 {
-    avl_t *temp = NULL;
+	avl_t *temp = NULL;
 
-    if (!root)
-        return (NULL);
+	if (!root)
+		return (NULL);
 
-    /* Navigate the tree to find the node to delete */
-    if (value < root->n)
-        root->left = avl_remove(root->left, value);
-    else if (value > root->n)
-        root->right = avl_remove(root->right, value);
-    else
-    {
-        /* Node to be deleted found */
-        if (!root->left)
-        {
-            temp = root->right;
-            free(root);
-            return (temp);
-        }
-        else if (!root->right)
-        {
-            temp = root->left;
-            free(root);
-            return (temp);
-        }
+	/* Navigate the tree to find the node to delete */
+	if (value < root->n)
+		root->left = avl_remove(root->left, value);
+	else if (value > root->n)
+		root->right = avl_remove(root->right, value);
+	else
+	{
+		/* Node to be deleted found */
+		if (!root->left)
+		{
+			temp = root->right;
+			free(root);
+			return (temp);
+		}
+		else if (!root->right)
+		{
+			temp = root->left;
+			free(root);
+			return (temp);
+		}
 
-        /* Node with two children: replace with in-order successor */
-        temp = find_min(root->right);
-        root->n = temp->n;
-        root->right = avl_remove(root->right, temp->n);
-    }
+		/* Node with two children: replace with in-order successor */
+		temp = find_min(root->right);
+		root->n = temp->n;
+		root->right = avl_remove(root->right, temp->n);
+	}
 
-    /* Rebalance the tree */
-    return (rebalance(root));
+	/* Rebalance the tree */
+	return (rebalance(root));
 }
