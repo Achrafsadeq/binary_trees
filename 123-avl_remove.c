@@ -1,73 +1,156 @@
 #include "binary_trees.h"
 
-/**
- * find_min - Finds the node with the minimum value in a subtree
- * @node: Pointer to the root of the subtree
- * Return: Pointer to the node with the minimum value
- */
-avl_t *find_min(avl_t *node)
-{
-    while (node->left)
-        node = node->left;
-    return (node);
-}
+bst_t *remove_(bst_t *root, int value);
+int remove_type(bst_t *root);
+int successor(bst_t *node);
+void avl_bal(avl_t **tree);
 
 /**
- * avl_remove - Removes a node from an AVL tree
- * @root: Pointer to the root of the tree
- * @value: The value to remove
- * Return: Pointer to the new root after removal
+ * avl_remove - Function that removes a node from an AVL tree
+ * @root: The root of binary tree
+ * @value: The node with value to remove
+ *
+ * Return: The updated tree
  */
 avl_t *avl_remove(avl_t *root, int value)
 {
-    avl_t *successor;
+	avl_t *avl_root = (avl_t *) remove_((bst_t *) root, value);
 
-    if (!root)
-        return (NULL);
+	if (avl_root == NULL)
+		return (NULL);
 
-    if (value < root->n)
-        root->left = avl_remove(root->left, value);
-    else if (value > root->n)
-        root->right = avl_remove(root->right, value);
-    else
-    {
-        if (!root->left && !root->right) /* Leaf node */
-        {
-            free(root);
-            return (NULL);
-        }
-        else if (!root->left || !root->right) /* One child */
-        {
-            successor = root->left ? root->left : root->right;
-            successor->parent = root->parent;
-            free(root);
-            return (successor);
-        }
-        else /* Two children */
-        {
-            successor = find_min(root->right);
-            root->n = successor->n;
-            root->right = avl_remove(root->right, successor->n);
-        }
-    }
+	avl_bal(&avl_root);
+	return (avl_root);
+}
 
-    /* Update balance factor and rebalance if necessary */
-    int balance = binary_tree_balance(root);
+/**
+ * remove_ - Function that removes a node from a BST tree
+ * @root: The root of binary tree
+ * @value: The node with value to remove
+ *
+ * Return: The updated tree
+ */
+bst_t *remove_(bst_t *root, int value)
+{
+	int type = 0;
 
-    if (balance > 1 && binary_tree_balance(root->left) >= 0) /* Left-Left */
-        return (binary_tree_rotate_right(root));
-    if (balance > 1 && binary_tree_balance(root->left) < 0) /* Left-Right */
-    {
-        root->left = binary_tree_rotate_left(root->left);
-        return (binary_tree_rotate_right(root));
-    }
-    if (balance < -1 && binary_tree_balance(root->right) <= 0) /* Right-Right */
-        return (binary_tree_rotate_left(root));
-    if (balance < -1 && binary_tree_balance(root->right) > 0) /* Right-Left */
-    {
-        root->right = binary_tree_rotate_right(root->right);
-        return (binary_tree_rotate_left(root));
-    }
+	if (root == NULL)
+		return (NULL);
 
-    return (root);
+	if (value < root->n)
+		remove_(root->left, value);
+
+	else if (value > root->n)
+		remove_(root->right, value);
+
+	else if (value == root->n)
+	{
+		type = remove_type(root);
+		if (type != 0)
+			remove_(root->right, type);
+	}
+	else
+		return (NULL);
+
+	return (root);
+}
+
+/**
+ * remove_type - Function that removes a node depending of its children
+ * @root: The root node to remove
+ * Return: Value, 0 if otherwise
+ */
+int remove_type(bst_t *root)
+{
+	int new_value = 0;
+
+	if (!root->left && !root->right)
+	{
+		if (root->parent->right == root)
+			root->parent->right = NULL;
+		else
+			root->parent->left = NULL;
+
+		free(root);
+		return (0);
+	}
+	else if ((!root->left && root->right) || (!root->right && root->left))
+	{
+		if (!root->left)
+		{
+			if (root->parent->right == root)
+				root->parent->right = root->right;
+			else
+				root->parent->left = root->right;
+
+			root->right->parent = root->parent;
+		}
+		if (!root->right)
+		{
+			if (root->parent->right == root)
+				root->parent->right = root->left;
+			else
+				root->parent->left = root->left;
+
+			root->left->parent = root->parent;
+		}
+		free(root);
+		return (0);
+	}
+	else
+	{
+		new_value = successor(root->right);
+		root->n = new_value;
+		return (new_value);
+	}
+}
+
+/**
+ * successor - Function to get the next successor in binary tree
+ * @node: The tree to check
+ * Return: Min value
+ */
+int successor(bst_t *node)
+{
+	int left = 0;
+
+	if (node == NULL)
+	{
+		return (0);
+	}
+	else
+	{
+		left = successor(node->left);
+		if (left == 0)
+		{
+			return (node->n);
+		}
+		return (left);
+	}
+}
+
+/**
+ * avl_bal - Function that measures balance factor of a AVL
+ * @tree: The tree to go through
+ * Return: Balance factor
+ */
+void avl_bal(avl_t **tree)
+{
+	int bal_val;
+
+	if (tree == NULL || *tree == NULL)
+		return;
+
+	if ((*tree)->left == NULL && (*tree)->right == NULL)
+		return;
+
+	avl_bal(&(*tree)->left);
+	avl_bal(&(*tree)->right);
+
+	bal_val = binary_tree_balance((const binary_tree_t *)*tree);
+	if (bal_val > 1)
+		*tree = binary_tree_rotate_right((binary_tree_t *)*tree);
+
+	else if (bal_val < -1)
+		*tree = binary_tree_rotate_left((binary_tree_t *)*tree);
 }
