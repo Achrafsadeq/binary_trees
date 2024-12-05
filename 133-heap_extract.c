@@ -12,41 +12,41 @@ size_t tree_height(const heap_t *tree);
  */
 int heap_extract(heap_t **root)
 {
-    int value;
-    heap_t *mbh, *new_node;
+	int value;
+	heap_t *mbh, *new_node;
 
-    if (!root || !*root)
-        return (0);
+	if (!root || !*root)
+		return (0);
 
-    mbh = *root;
-    value = mbh->n;
-    
-    if (!mbh->left && !mbh->right)
-    {
-        *root = NULL;
-        free(mbh);
-        return (value);
-    }
+	mbh = *root;
+	value = mbh->n;
 
-    /* Find the last node using pre-order traversal */
-    pre_order(mbh, &new_node, tree_height(mbh));
+	if (!mbh->left && !mbh->right)
+	{
+		*root = NULL;
+		free(mbh);
+		return (value);
+	}
 
-    /* Replace the root node's value with the last node's value */
-    mbh->n = new_node->n;
+	/* Find the last node using pre-order traversal */
+	pre_order(mbh, &new_node, tree_height(mbh));
 
-    /* Remove the last node */
-    if (new_node->parent->right)
-        new_node->parent->right = NULL;
-    else
-        new_node->parent->left = NULL;
+	/* Replace the root node's value with the last node's value */
+	mbh->n = new_node->n;
 
-    free(new_node);
+	/* Remove the last node */
+	if (new_node->parent->right)
+		new_node->parent->right = NULL;
+	else
+		new_node->parent->left = NULL;
 
-    /* Reorganize the tree to maintain max heap property */
-    make_heap(mbh);
+	free(new_node);
 
-    *root = mbh;
-    return (value);
+	/* Reorganize the tree to maintain max heap property */
+	make_heap(mbh);
+
+	*root = mbh;
+	return (value);
 }
 
 /**
@@ -57,16 +57,16 @@ int heap_extract(heap_t **root)
  */
 void pre_order(heap_t *tree, heap_t **node, size_t height)
 {
-    if (!tree)
-        return;
+	if (!tree)
+		return;
 
-    if (height == 0)
-        *node = tree;
+	if (height == 0)
+		*node = tree;
 
-    height--;
+	height--;
 
-    pre_order(tree->left, node, height);
-    pre_order(tree->right, node, height);
+	pre_order(tree->left, node, height);
+	pre_order(tree->right, node, height);
 }
 
 /**
@@ -75,34 +75,34 @@ void pre_order(heap_t *tree, heap_t **node, size_t height)
  */
 void make_heap(heap_t *root)
 {
-    heap_t *tmp_l, *tmp_r;
-    int value;
+	heap_t *tmp_l, *tmp_r;
+	int value;
 
-    if (!root)
-        return;
+	if (!root)
+		return;
 
-    tmp_l = root;
+	tmp_l = root;
 
-    while (1)
-    {
-        if (!tmp_l->left)
-            break;
+	while (1)
+	{
+		if (!tmp_l->left)
+			break;
 
-        if (!tmp_l->right)
-            tmp_r = tmp_l->left;
-        else
-            tmp_r = (tmp_l->left->n > tmp_l->right->n) ? tmp_l->left : tmp_l->right;
+		if (!tmp_l->right)
+			tmp_r = tmp_l->left;
+		else
+			tmp_r = (tmp_l->left->n > tmp_l->right->n) ? tmp_l->left : tmp_l->right;
 
-        /* Swap parent and largest child if needed */
-        if (tmp_l->n > tmp_r->n)
-            break;
+		/* Swap parent and largest child if needed */
+		if (tmp_l->n > tmp_r->n)
+			break;
 
-        value = tmp_l->n;
-        tmp_l->n = tmp_r->n;
-        tmp_r->n = value;
+		value = tmp_l->n;
+		tmp_l->n = tmp_r->n;
+		tmp_r->n = value;
 
-        tmp_l = tmp_r;
-    }
+		tmp_l = tmp_r;
+	}
 }
 
 /**
@@ -112,18 +112,18 @@ void make_heap(heap_t *root)
  */
 size_t tree_height(const heap_t *tree)
 {
-    size_t l_height = 0, r_height = 0;
+	size_t l_height = 0, r_height = 0;
 
-    if (!tree)
-        return (0);
+	if (!tree)
+		return (0);
 
-    /* Recursively calculate the height of left and right subtrees */
-    if (tree->left)
-        l_height = 1 + tree_height(tree->left);
+	/* Recursively calculate the height of left and right subtrees */
+	if (tree->left)
+		l_height = 1 + tree_height(tree->left);
 
-    if (tree->right)
-        r_height = 1 + tree_height(tree->right);
+	if (tree->right)
+		r_height = 1 + tree_height(tree->right);
 
-    /* Return the greater of the two subtree heights */
-    return (l_height > r_height) ? l_height : r_height;
+	/* Return the greater of the two subtree heights */
+	return ((l_height > r_height) ? l_height : r_height);
 }
