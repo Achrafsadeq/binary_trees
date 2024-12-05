@@ -2,6 +2,20 @@
 #include <stdlib.h>
 
 /**
+ * swap_values - Swaps the values of two nodes
+ * @node1: Pointer to the first node
+ * @node2: Pointer to the second node
+ */
+void swap_values(heap_t *node1, heap_t *node2)
+{
+	int temp;
+
+	temp = node1->n;
+	node1->n = node2->n;
+	node2->n = temp;
+}
+
+/**
  * heapify_up - Restores the max heap property by "bubbling up"
  * @node: Pointer to the newly inserted node
  *
@@ -9,70 +23,48 @@
  */
 heap_t *heapify_up(heap_t *node)
 {
-	heap_t *parent;
-	int temp;
-
-	if (!node || !node->parent)
-		return (node);
-
-	parent = node->parent;
-
-	/* Swap if the parent is smaller than the current node */
-	if (parent->n < node->n)
+	while (node->parent && node->n > node->parent->n)
 	{
-		temp = parent->n;
-		parent->n = node->n;
-		node->n = temp;
-		return (heapify_up(parent));
+		swap_values(node, node->parent);
+		node = node->parent;
 	}
-
 	return (node);
 }
 
 /**
- * insert_node_level_order - Inserts a node into the first available position
- *                           in level order
- * @root: Pointer to the root of the heap
- * @value: Value to insert
+ * find_insertion_point - Finds the first available position for insertion
+ *                        using level-order traversal
+ * @root: Pointer to the root of the tree
  *
- * Return: Pointer to the newly inserted node, or NULL on failure
+ * Return: Pointer to the parent node where the new node should be inserted
  */
-heap_t *insert_node_level_order(heap_t *root, int value)
+heap_t *find_insertion_point(heap_t *root)
 {
-	heap_t *new_node = NULL;
-	queue_t *queue = NULL, *current;
+	queue_t *queue = queue_create();
+	heap_t *current = NULL;
 
-	/* Level-order traversal using a queue */
-	queue = queue_create(root);
-	while (queue)
+	if (!queue || !root)
+		return (NULL);
+
+	queue_enqueue(queue, root);
+
+	while (!queue_is_empty(queue))
 	{
-		current = queue_dequeue(&queue);
+		current = queue_dequeue(queue);
 
-		/* Insert the new node as a left or right child */
-		if (!current->node->left)
-		{
-			current->node->left = binary_tree_node(current->node, value);
-			new_node = current->node->left;
+		if (!current->left || !current->right)
 			break;
-		}
-		else if (!current->node->right)
-		{
-			current->node->right = binary_tree_node(current->node, value);
-			new_node = current->node->right;
-			break;
-		}
 
-		/* Add the children to the queue */
-		queue_enqueue(&queue, current->node->left);
-		queue_enqueue(&queue, current->node->right);
+		queue_enqueue(queue, current->left);
+		queue_enqueue(queue, current->right);
 	}
 
-	free_queue(queue);
-	return (new_node);
+	queue_free(queue);
+	return (current);
 }
 
 /**
- * heap_insert - Inserts a value in Max Binary Heap
+ * heap_insert - Inserts a value in a Max Binary Heap
  * @root: Double pointer to the root of the heap
  * @value: Value to insert
  *
@@ -80,22 +72,32 @@ heap_t *insert_node_level_order(heap_t *root, int value)
  */
 heap_t *heap_insert(heap_t **root, int value)
 {
-	heap_t *new_node;
+	heap_t *new_node, *parent;
 
 	if (!root)
 		return (NULL);
 
-	/* If the heap is empty, create the root node */
+	/* Create the root node if it doesn't exist */
 	if (!*root)
 	{
 		*root = binary_tree_node(NULL, value);
 		return (*root);
 	}
 
-	/* Insert the node at the first available position */
-	new_node = insert_node_level_order(*root, value);
+	/* Find the insertion point */
+	parent = find_insertion_point(*root);
+	if (!parent)
+		return (NULL);
+
+	/* Insert the new node as a left or right child */
+	new_node = binary_tree_node(parent, value);
 	if (!new_node)
 		return (NULL);
+
+	if (!parent->left)
+		parent->left = new_node;
+	else
+		parent->right = new_node;
 
 	/* Restore the max heap property */
 	return (heapify_up(new_node));
