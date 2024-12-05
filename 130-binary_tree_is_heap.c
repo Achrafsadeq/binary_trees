@@ -1,6 +1,7 @@
 #include "binary_trees.h"
 #include <stdbool.h>
-
+size_t binary_tree_size(const binary_tree_t *tree);
+int max_heap_property(const binary_tree_t *tree);
 /**
  * binary_tree_size - Measures the size of a binary tree
  * @tree: Pointer to the root node of the tree to measure the size
@@ -9,9 +10,9 @@
  */
 size_t binary_tree_size(const binary_tree_t *tree)
 {
-    if (!tree)
-        return (0);
-    return (1 + binary_tree_size(tree->left) + binary_tree_size(tree->right));
+	if (!tree)
+		return (0);
+	return (1 + binary_tree_size(tree->left) + binary_tree_size(tree->right));
 }
 
 /**
@@ -24,12 +25,12 @@ size_t binary_tree_size(const binary_tree_t *tree)
  */
 int is_complete(const binary_tree_t *tree, size_t index, size_t size)
 {
-    if (!tree)
-        return (1);
-    if (index >= size)
-        return (0);
-    return (is_complete(tree->left, 2 * index + 1, size) &&
-            is_complete(tree->right, 2 * index + 2, size));
+	if (!tree)
+		return (1);
+	if (index >= size)
+		return (0);
+	return (is_complete(tree->left, 2 * index + 1, size) &&
+		is_complete(tree->right, 2 * index + 2, size));
 }
 
 /**
@@ -40,13 +41,13 @@ int is_complete(const binary_tree_t *tree, size_t index, size_t size)
  */
 int max_heap_property(const binary_tree_t *tree)
 {
-    if (!tree)
-        return (1);
-    if (tree->left && tree->left->n > tree->n)
-        return (0);
-    if (tree->right && tree->right->n > tree->n)
-        return (0);
-    return (max_heap_property(tree->left) && max_heap_property(tree->right));
+	if (!tree)
+		return (1);
+	if (tree->left && tree->left->n > tree->n)
+		return (0);
+	if (tree->right && tree->right->n > tree->n)
+		return (0);
+	return (max_heap_property(tree->left) && max_heap_property(tree->right));
 }
 
 /**
@@ -57,17 +58,17 @@ int max_heap_property(const binary_tree_t *tree)
  */
 int binary_tree_is_heap(const binary_tree_t *tree)
 {
-    size_t size;
+	size_t size;
 
-    if (!tree)
-        return (0);
+	if (!tree)
+		return (0);
 
-    size = binary_tree_size(tree);
-    if (!is_complete(tree, 0, size))
-        return (0);
+	size = binary_tree_size(tree);
+	if (!is_complete(tree, 0, size))
+		return (0);
 
-    if (!max_heap_property(tree))
-        return (0);
+	if (!max_heap_property(tree))
+		return (0);
 
-    return (1);
+	return (1);
 }
