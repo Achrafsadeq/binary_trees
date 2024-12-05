@@ -1,6 +1,10 @@
 #include "binary_trees.h"
 #include <stdlib.h>
 
+avl_t *avl_remove(avl_t *root, int value);
+avl_t *rebalance(avl_t *tree);
+avl_t *find_min(avl_t *node);
+
 /**
  * find_min - Finds the node with the smallest value in a subtree
  * @node: Pointer to the root of the subtree
@@ -34,7 +38,8 @@ avl_t *rebalance(avl_t *tree)
 		return (binary_tree_rotate_right(tree));
 
 	/* Left-Right case */
-	if (balance > 1 && binary_tree_balance(tree->left) < 0) {
+	if (balance > 1 && binary_tree_balance(tree->left) < 0)
+	{
 		tree->left = binary_tree_rotate_left(tree->left);
 		return (binary_tree_rotate_right(tree));
 	}
@@ -44,7 +49,8 @@ avl_t *rebalance(avl_t *tree)
 		return (binary_tree_rotate_left(tree));
 
 	/* Right-Left case */
-	if (balance < -1 && binary_tree_balance(tree->right) > 0) {
+	if (balance < -1 && binary_tree_balance(tree->right) > 0)
+	{
 		tree->right = binary_tree_rotate_right(tree->right);
 		return (binary_tree_rotate_left(tree));
 	}
@@ -71,13 +77,17 @@ avl_t *avl_remove(avl_t *root, int value)
 		root->left = avl_remove(root->left, value);
 	else if (value > root->n)
 		root->right = avl_remove(root->right, value);
-	else {
+	else
+	{
 		/* Node to be deleted found */
-		if (!root->left) {
+		if (!root->left)
+		{
 			temp = root->right;
 			free(root);
 			return (temp);
-		} else if (!root->right) {
+		}
+		else if (!root->right)
+		{
 			temp = root->left;
 			free(root);
 			return (temp);
