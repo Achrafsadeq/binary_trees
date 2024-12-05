@@ -1,5 +1,9 @@
 #include "binary_trees.h"
 
+int get_balance(const binary_tree_t *tree);
+avl_t *balance_avl_tree(avl_t **tree);
+avl_t *avl_insert_recursive(avl_t **tree, avl_t *parent, int value);
+
 /**
  * get_balance - Calculates the balance factor of a binary tree
  * @tree: Pointer to the root of the tree
