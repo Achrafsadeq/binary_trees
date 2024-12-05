@@ -1,4 +1,5 @@
 #include "binary_trees.h"
+#include "133-heap_extract.c"
 
 size_t calculate_tree_size(const binary_tree_t *tree);
 
