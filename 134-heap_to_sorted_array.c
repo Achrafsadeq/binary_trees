@@ -1,6 +1,8 @@
 #include "binary_trees.h"
 #include <stdlib.h>
 
+size_t count_nodes(heap_t *root);
+
 /**
  * count_nodes - Counts the number of nodes in a binary tree
  * @root: Pointer to the root node of the tree
