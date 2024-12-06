@@ -8,9 +8,10 @@
  */
 void swap_values(heap_t *node1, heap_t *node2)
 {
-    int temp = node1->n;
-    node1->n = node2->n;
-    node2->n = temp;
+	int temp = node1->n;
+
+	node1->n = node2->n;
+	node2->n = temp;
 }
 
 /**
@@ -19,43 +20,43 @@ void swap_values(heap_t *node1, heap_t *node2)
  */
 void bubble_up(heap_t *node)
 {
-    while (node->parent && node->n > node->parent->n)
-    {
-        swap_values(node, node->parent);
-        node = node->parent;
-    }
+	while (node->parent && node->n > node->parent->n)
+	{
+		swap_values(node, node->parent);
+		node = node->parent;
+	}
 }
 
 /**
- * find_insert_position - Finds the next position to insert a node using level order.
+ * find_insert_position - Finds the next position to insert a node
+ * using level order.
  * @root: Root of the heap.
  * Return: Pointer to the parent where the new node should be inserted.
  */
 heap_t *find_insert_position(heap_t *root)
 {
-    heap_t **queue;
-    heap_t *current;
-    size_t front = 0, back = 0;
+	heap_t **queue, *current;
+	size_t front = 0, back = 0;
 
-    queue = malloc(1024 * sizeof(heap_t *));
-    if (!queue)
-        return (NULL);
+	queue = malloc(1024 * sizeof(heap_t *));
+	if (!queue)
+		return (NULL);
 
-    queue[back++] = root;
-    while (front < back)
-    {
-        current = queue[front++];
-        if (!current->left || !current->right)
-        {
-            free(queue);
-            return (current);
-        }
-        queue[back++] = current->left;
-        queue[back++] = current->right;
-    }
+	queue[back++] = root;
+	while (front < back)
+	{
+		current = queue[front++];
+		if (!current->left || !current->right)
+		{
+			free(queue);
+			return (current);
+		}
+		queue[back++] = current->left;
+		queue[back++] = current->right;
+	}
 
-    free(queue);
-    return (NULL);
+	free(queue);
+	return (NULL);
 }
 
 /**
@@ -66,28 +67,29 @@ heap_t *find_insert_position(heap_t *root)
  */
 heap_t *heap_insert(heap_t **root, int value)
 {
-    heap_t *new_node, *insert_position;
+	heap_t *new_node, *insert_position;
 
-    if (!root)
-        return (NULL);
+	if (!root)
+		return (NULL);
 
-    if (!*root)
-    {
-        *root = binary_tree_node(NULL, value);
-        return (*root);
-    }
+	if (!*root)
+	{
+		*root = binary_tree_node(NULL, value);
+		return (*root);
+	}
 
-    insert_position = find_insert_position(*root);
-    if (!insert_position)
-        return (NULL);
+	insert_position = find_insert_position(*root);
+	if (!insert_position)
+		return (NULL);
 
-    if (!insert_position->left)
-        insert_position->left = binary_tree_node(insert_position, value);
-    else
-        insert_position->right = binary_tree_node(insert_position, value);
+	if (!insert_position->left)
+		insert_position->left = binary_tree_node(insert_position, value);
+	else
+		insert_position->right = binary_tree_node(insert_position, value);
 
-    new_node = insert_position->left ? insert_position->left : insert_position->right;
-    bubble_up(new_node);
+	new_node = insert_position->left ? insert_position->left
+		: insert_position->right;
+	bubble_up(new_node);
 
-    return (new_node);
+	return (new_node);
 }
